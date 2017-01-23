@@ -141,7 +141,7 @@ function generarContenidoNavegacion(response) {
   	var catg = data.getFormattedValue(row_nav, 0);
   	if (catg != categoria_actual)
   	{
-  		if (row_nav != 0) html.push('<td/><br/><tr/>');
+  		if (row_nav != 0) html.push('<td/><tr/><td/><tr/>');
   		html.push('<tr>');
   		html.push('<td width="35%" style="vertical-align: top; font-size: medium;">'+catg+'</td>');
   		html.push('<td style="font-size: small;">');
