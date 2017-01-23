@@ -9,7 +9,7 @@
 
 <Content type="html" preferred_width="800" preferred_heigth="600"><![CDATA[
 
-<!-- <script src="http://www.google.com/jsapi" type="text/javascript"></script> -->
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
 
 <div id="tablediv" style="overflow: auto;">
 Generando informe...
@@ -124,7 +124,7 @@ function generarContenidoNavegacion(response) {
   var html = [];   // start the HTML output string
   html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
-  html.push('<h1>Navegación por categorías</h1>\n');
+  html.push('<h1>Navegación por categorías</h1>');
 
   var categoria_actual = "";
   
