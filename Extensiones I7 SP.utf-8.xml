@@ -142,7 +142,6 @@ function generarContenidoNavegacion(response) {
   	if (catg != categoria_actual)
   	{
   		if (row_nav != 0) html.push('</td/></tr>');
-  		html.push('<tr></tr>')	
   		html.push('<tr>');
   		html.push('<td width="35%" style="vertical-align: top; font-size: medium;">'+catg+'</td>');
   		html.push('<td style="font-size: small;">');
@@ -160,7 +159,7 @@ function generarContenidoNavegacion(response) {
 		if (novedades[subcatg] > 1) html.push('es');
 		html.push('!</i></font>');
 	}
-	html.push('<br/>');
+	html.push('<br/><br/>');
 	
   }
   html.push('<tr/></table>');
