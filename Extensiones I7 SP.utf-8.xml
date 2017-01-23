@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<Module>
+<ModulePrefs title="Extensiones por categoria" 
+    title_url="http://groups.google.com/group/Google-Gadgets-API" 
+ height="200" 
+    author="Mastodon" 
+    author_email="xxx@google.com"/> 
+
+
+<Content type="html" preferred_width="800" preferred_heigth="600"><![CDATA[
+
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+
+<div id="tablediv" style="overflow: auto;">
+Generando informe...
+</div>
+
+<script>
+
+/**
+ * Load the APIs and run sendQuery when the load is complete
+ */
+var etiqueta_to_go = '';
+var meses = new Array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
+var dias_semana = new Array("Dom", "Lun","Mar","Mie","Jue","Vie","Sáb");
+var EXTENSIONES_I7_SPREADSHEET='https://spreadsheets.google.com/ccc?key=0Ak5VoRoml2L0dHl6aUtKNlRPZk1fMVk1R3hhZkhFTFE&hl=en&authkey=CPrJwJID';
+
+_IG_RegisterOnloadHandler(loadVisualizationAPI);
+function loadVisualizationAPI() {
+  google.load("visualization", "1");
+  google.setOnLoadCallback(sendQueryNavegacion);
+}
+
+/* Info sobre novedades por categoría */
+var novedades = [];
+/** Consulta para obtener el número de novedades por subcategoría */
+function calcNovedades()
+{
+	
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select C, D, count(A) where dateDiff(now(),E) < 15 group by C, D');
+  query.send(cargarNovedades);	
+}
+
+function cargarNovedades(response) {
+  
+  novedades = [];
+  
+  var data = response.getDataTable();
+  for (var row = 0; row < data.getNumberOfRows(); row++)
+  {
+  	novedades[data.getValue(row, 1)] = data.getValue(row,2);
+  }
+}
+
+/** Envio de query para listado de navegacion por categorías */
+function sendQueryNavegacion() {
+  calcNovedades();
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select C, D, count(A) group by C, D');
+  query.send(generarContenidoNavegacion);
+  
+}
+
+/** Envio de query para listado completo por categoría */
+function sendQueryPorCategoria() {
+  
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select A, B, C, D, E, F, G, H, I order by C, D');
+  query.send(generarContenidoPorCategoria);
+  
+}
+
+/** Envio de query para listado completo por título */
+function sendQueryPorTitulo() {
+  
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select A, B, C, D, E, F, G, H, I order by A');
+  query.send(generarContenidoPorTitulo);
+  
+}
+
+/** Envio de query para listado completo por autor */
+function sendQueryPorAutor() {
+  
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select A, B, C, D, E, F, G, H, I order by B');
+  query.send(generarContenidoPorAutor);
+  
+}
+
+/** Envio de query para listado completo por traductor */
+function sendQueryPorTraductor() {
+  
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select A, B, C, D, E, F, G, H, I where I<>\'\' and I<>\'n/a\' and I<>\'N/A\' order by I,A');
+  query.send(generarContenidoPorTraductor);
+  
+}
+
+/** Envio de query para búsquedas */
+function sendQueryBusqueda(texto) { 
+  var query = new google.visualization.Query(EXTENSIONES_I7_SPREADSHEET);
+  
+  query.setQuery('select A, B, C, D, E, F, G, H, I where upper(A) like \'%'+texto.toUpperCase()+'%\' order by A');
+  query.send(generarContenidoDeBusqueda);
+  
+}
+
+/* Genera la página de contenido en el listado de resumen de navegación por categorías */
+function generarContenidoNavegacion(response) {
+  if (response.isError()) {
+      alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+    return;}
+  
+  var data = response.getDataTable();
+
+  var html = [];   // start the HTML output string
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
+
+  html.push('<h1>Navegación por categorías</h1>\n');
+
+  var categoria_actual = "";
+  
+  html.push('<table width="100%">');
+  
+  html.push('<tr><td width="35%" style="vertical-align: top; font-size: medium;">Búsqueda</td><td style="font-size: small;">');
+  html.push('<form name="buscador" action="#" onsubmit="searchIt(); return false" align="right"><input name="name" /><input type="submit" value="Buscar" /></form>');
+  html.push('</td></tr><br/>');
+  
+  html.push('<tr><td width="35%" style="vertical-align: top; font-size: medium;">Índices</td><td style="font-size: small;">');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryPorCategoria();">Todas las extensiones por categoría</a><br/>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryPorTitulo();">Todas las extensiones por título</a><br/>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryPorAutor();">Todas las extensiones por autor</a><br/>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryPorTraductor();">Todas las traducciones por traductor</a><br/>');
+
+
+  html.push('</td></tr><br/>');
+
+  for (var row_nav = 0; row_nav < data.getNumberOfRows(); row_nav++) {
+  	var catg = data.getFormattedValue(row_nav, 0);
+  	if (catg != categoria_actual)
+  	{
+  		if (row_nav != 0) html.push('<td/><tr/><br/>');
+  		html.push('<tr>');
+  		html.push('<td width="35%" style="vertical-align: top; font-size: medium;">'+catg+'</td>');
+  		html.push('<td style="font-size: small;">');
+  		categoria_actual = catg;
+  	}
+  	var subcatg = data.getFormattedValue(row_nav, 1);
+	var num_extensiones = data.getFormattedValue(row_nav, 2);
+	html.push('<a href="javascript:etiqueta_to_go=\''+subcatg.trim()+'\';sendQueryPorCategoria();">');
+	html.push(subcatg);
+	html.push('</a>'+' ('+num_extensiones+')');
+	if (subcatg in novedades) 
+	{
+		html.push('<font color="#ff0000" size="-2"><i>');
+		html.push(' ¡'+novedades[subcatg]+' novedad');
+		if (novedades[subcatg] > 1) html.push('es');
+		html.push('!</i></font>');
+	}
+	html.push('<br/>');
+	
+  }
+  html.push('<tr/></table>');
+  
+  var tableDiv = _gel('tablediv');
+  tableDiv.innerHTML = html.join('');
+  tableDiv.style.width = document.body.clientWidth + 'px';
+  tableDiv.style.height = document.body.clientHeight + 'px';
+  
+  
+}
+
+/* Genera la página de contenido en el listado completo por categorías */
+function generarContenidoPorCategoria(response) {
+
+  
+  var data = response.getDataTable();
+
+  var html = [];   // start the HTML output string
+  
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
+
+  html.push('<h1>Todas las extensiones por categoría</h1>\n');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/>');
+
+  var categoria_actual = "";
+  var subcategoria_actual = "";
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+  	var catg = data.getFormattedValue(row, 2);
+  	if (catg != categoria_actual)
+  	{
+  		if (row != 0) html.push('<hr/>');
+  		html.push('<h2><a name="'+catg.trim()+'">');
+  		html.push(catg);
+  		html.push('</a></h2>');
+  		categoria_actual = catg;
+  	}
+  	var subcatg = data.getFormattedValue(row, 3);
+	  	if (subcatg != subcategoria_actual)
+	  	{
+	  		html.push('<h3><a name="'+subcatg.trim()+'">');
+	  		html.push(subcatg);
+	  		html.push('</a></h3>');
+	  		subcategoria_actual = subcatg;
+  	}
+  	mostrarFicha (data, row, html);
+  }
+
+  
+  var tableDiv = _gel('tablediv');
+  tableDiv.innerHTML = html.join('');
+  tableDiv.style.width = document.body.clientWidth + 'px';
+  tableDiv.style.height = document.body.clientHeight + 'px';
+  
+  if (etiqueta_to_go != '') irAEtiqueta(etiqueta_to_go);
+}
+
+/* Genera la página de contenido en el listado completo por titulo */
+function generarContenidoPorTitulo(response) {
+
+  var data = response.getDataTable();
+  var html = [];
+  
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
+
+  html.push('<h2>Todas las extensiones por título</h2>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/>');
+  var letra_actual = '';
+  
+  html.push('<p>[ ');
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	if (data.getFormattedValue(row, 0).charAt(0).toUpperCase() != letra_actual)
+	{
+		if (letra_actual != '') html.push(' - ');
+		letra_actual = data.getFormattedValue(row, 0).charAt(0).toUpperCase();
+		html.push('<a href="#'+letra_actual+'">'+letra_actual+'</a>');
+	}
+  }
+  html.push(' ]</p>');
+  
+  listadoPorTitulo(data, html);
+  
+}
+
+function generarContenidoDeBusqueda(response)
+{
+  var data = response.getDataTable();
+  var html = [];
+
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
+
+  html.push('<h2>Resultado de la búsqueda</h2>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/>');
+  if (data.getNumberOfRows() == 0)
+  {
+  	html.push('No se encontró ninguna extensión. Modifica o reduce la cadena de búsqueda que has utilizado.');
+  	var tableDiv = _gel('tablediv');
+	tableDiv.innerHTML = html.join('');
+	tableDiv.style.width = document.body.clientWidth + 'px';
+  	tableDiv.style.height = document.body.clientHeight + 'px';
+  }
+  else 
+  {
+  	html.push('<br/>');
+  	if (data.getNumberOfRows()==1)
+  		html.push('Se encontró <strong>1</strong> extensión');
+  	else
+  		html.push('Se encontraron <strong>'+data.getNumberOfRows()+'</strong> extensiones');
+  	html.push(' con los criterios de búsqueda utilizados.<br/><hr/>');
+  	listadoPorTitulo(data, html);
+  }
+}
+
+
+/* Genera el listado (tras la cabecera por orden alfabético para
+   el informe por título y el de búsqueda */
+function listadoPorTitulo(data, html)
+{
+  var letra_actual = '';
+
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	if (data.getFormattedValue(row, 0).charAt(0).toUpperCase() != letra_actual)
+	{
+		letra_actual = data.getFormattedValue(row, 0).charAt(0).toUpperCase();
+		html.push('<a name="'+letra_actual+'"></a><br/>');
+	}
+	mostrarFichaConCategoria (data, row, html);
+  }
+
+  var tableDiv = _gel('tablediv');
+  tableDiv.innerHTML = html.join('');
+  tableDiv.style.width = document.body.clientWidth + 'px';
+  tableDiv.style.height = document.body.clientHeight + 'px';
+	  
+  if (etiqueta_to_go != '') irAEtiqueta(etiqueta_to_go);
+}
+
+/* Genera la página de contenido en el listado completo por autor */
+function generarContenidoPorAutor(response) {
+
+  
+  var data = response.getDataTable();
+  var html = [];
+  
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
+
+  html.push('<h2>Todas las extensiones por autor</h2>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/><br/>');
+
+  var autor_actual = '';
+  
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	if (data.getFormattedValue(row, 1) != autor_actual)
+	{
+		autor_actual = data.getFormattedValue(row, 1);
+		html.push('&gt <a href="#'+autor_actual.trim()+'">'+autor_actual+'</a><br/>');
+	}
+        
+  }
+  html.push('<br/>');
+  autor_actual = '';
+
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	if (data.getFormattedValue(row, 1) != autor_actual)
+	{
+		if (autor_actual != '') html.push('<hr/>');
+		autor_actual = data.getValue(row, 1);
+		html.push('<h3><a name="'+autor_actual.trim()+'">'+autor_actual+'</a></h3>');
+	}
+  	mostrarFichaConCategoria (data, row, html);
+  }
+
+  var tableDiv = _gel('tablediv');
+  tableDiv.innerHTML = html.join('');
+  tableDiv.style.width = document.body.clientWidth + 'px';
+  tableDiv.style.height = document.body.clientHeight + 'px';
+  
+  if (etiqueta_to_go != '') irAEtiqueta(etiqueta_to_go);
+}
+
+/* Genera la página de contenido en el listado completo por traductor */
+function generarContenidoPorTraductor(response) {
+
+  
+  var data = response.getDataTable();
+  var html = [];
+  
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
+
+  html.push('<h2>Todas las extensiones por traductor</h2>');
+  html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/><br/>');
+
+  var traductor_actual = '';
+  
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	if (data.getFormattedValue(row, 8) != traductor_actual)
+	{
+		traductor_actual = data.getFormattedValue(row, 8);
+		html.push('&gt <a href="#'+traductor_actual.trim()+'">'+traductor_actual+'</a><br/>');
+	}
+        
+  }
+  html.push('<br/>');
+  traductor_actual = '';
+
+  for (var row = 0; row < data.getNumberOfRows(); row++) {
+	if (data.getFormattedValue(row, 8) != traductor_actual)
+	{
+		if (traductor_actual != '') html.push('<hr/>');
+		traductor_actual = data.getValue(row, 8);
+		html.push('<h3><a name="'+traductor_actual.trim()+'">'+traductor_actual+'</a></h3>');
+	}
+  	mostrarFichaConCategoria (data, row, html);
+  }
+
+  var tableDiv = _gel('tablediv');
+  tableDiv.innerHTML = html.join('');
+  tableDiv.style.width = document.body.clientWidth + 'px';
+  tableDiv.style.height = document.body.clientHeight + 'px';
+  
+  if (etiqueta_to_go != '') irAEtiqueta(etiqueta_to_go);
+}
+
+/* Funcion para desplazar la vista hasta la etiqueta nombrada */
+function irAEtiqueta(etiqueta)
+{
+	var currentHref = window.location.href;
+  	window.location.href = currentHref.substr(0, currentHref.lastIndexOf("#")) + "#" + etiqueta;
+}
+
+/** Función para mostrar la ficha de la extensión */
+function mostrarFicha(data, row, html) {
+	var fecha = ' '+dias_semana[data.getValue(row, 4).getDay()]+', '+data.getValue(row, 4).getDate()+' de '+meses[data.getValue(row, 4).getMonth()]+' de '+data.getValue(row, 4).getFullYear();
+	var fecha_novedad = new Date();
+        fecha_novedad.setDate(fecha_novedad.getDate()-15);
+
+	html.push('<strong>'+data.getFormattedValue(row, 0)+'</strong>'); /* Nombre */
+  	html.push(' por <strong><a href="javascript:etiqueta_to_go=\''+data.getFormattedValue(row, 1).trim()+'\';sendQueryPorAutor();">'+data.getFormattedValue(row, 1)+'</a></strong>'); /* Autor */
+  	html.push(' versión <strong>'+data.getFormattedValue(row, 5)+'</strong>'); /* Version */
+	if (data.getValue(row, 4) > fecha_novedad) html.push('   <FONT color="#ff0000" size="-2" style="vertical-align:middle;"><i>¡Novedad!</i></FONT>'); /* ¿es novedad? */
+	
+	html.push('<br/>');
+  	html.push('<blockquote style="margin-top: 0em">');
+  	html.push('<em style="font-size: small">'+fecha); /* Fecha de actualizacion */
+	if (data.getFormattedValue(row, 8) != '' && data.getFormattedValue(row, 8).toLowerCase() != 'n/a')
+	{
+		html.push(', Traductor: <a href="javascript:etiqueta_to_go=\''+data.getFormattedValue(row, 8).trim()+'\';sendQueryPorTraductor();">'+data.getFormattedValue(row, 8)+'</a>'); /* Traductor */
+	}
+	html.push('</em><br/>');
+  	html.push('<a href=\"'+data.getFormattedValue(row, 6)+'\">Descargar</a><br/>'); /* Enlace a descarga */
+  	html.push(''+data.getFormattedValue(row, 7)+'</blockquote>'); /* Descripcion */
+}
+
+/** La misma que la anterior con información y enlaces a categorías */
+function mostrarFichaConCategoria(data, row, html) {
+	mostrarFicha(data, row, html);	
+	html.push('<blockquote style="margin-top: 0em"><FONT size="-1"><i><a href="javascript:etiqueta_to_go=\''+data.getFormattedValue(row, 2).trim()+'\';sendQueryPorCategoria();">'+data.getFormattedValue(row, 2)+'</a> > ' +
+                  '<a href="javascript:etiqueta_to_go=\''+data.getFormattedValue(row, 3).trim()+'\';sendQueryPorCategoria();">'+data.getFormattedValue(row, 3)+'</a></i></font></blockquote>');
+}
+
+String.prototype.trim = function() {  
+   return this.replace(/^\s+|\s+$/g,"");  
+}  
+
+function searchIt()
+{
+	
+	var texto = document.forms['buscador'].elements[0].value;
+	if (texto=='')
+		alert('Debes especificar un valor de búsqueda en la casilla');
+	else
+		sendQueryBusqueda(texto);
+}
+
+
+
+
+
+
+</script>
+]]>
+</Content>
+</Module>
