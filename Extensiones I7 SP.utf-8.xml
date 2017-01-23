@@ -124,7 +124,7 @@ function generarContenidoNavegacion(response) {
   var html = [];   // start the HTML output string
   html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
-  html.push('Navegación por categorías');
+  /* html.push('Navegación por categorías'); */
 
   var categoria_actual = "";
   
