@@ -123,14 +123,8 @@ function generarContenidoNavegacion(response) {
 
   var html = [];   // start the HTML output string
   html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
-
-  /* html.push('Navegación por categorías'); */
-
-  var categoria_actual = "";
-  
-  html.push('<table width="100%">');
-  
-  html.push('<tr><td width="35%" style="vertical-align: top; font-size: medium;">Búsqueda</td><td style="font-size: small;">');
+  var categoria_actual = ""
+  html.push('<h1>Navegación por categorías</h1><table width="100%"><tr><td width="35%" style="vertical-align: top; font-size: medium;">Búsqueda</td><td style="font-size: small;">');
   html.push('<form name="buscador" action="#" onsubmit="searchIt(); return false" align="right"><input name="name" /><input type="submit" value="Buscar" /></form>');
   html.push('</td></tr><br/>');
   
