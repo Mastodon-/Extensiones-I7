@@ -122,7 +122,7 @@ function generarContenidoNavegacion(response) {
   var data = response.getDataTable();
 
   var html = [];   // start the HTML output string
-  html.push('<head><link rel="stylesheet" type="text/css" href="http://dl.dropbox.com/u/2765579/style_I7_ext.css"></link></head>');
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
   html.push('<h1>Navegación por categorías</h1>\n');
 
@@ -186,7 +186,7 @@ function generarContenidoPorCategoria(response) {
 
   var html = [];   // start the HTML output string
   
-  html.push('<head><link rel="stylesheet" type="text/css" href="http://dl.dropbox.com/u/2765579/style_I7_ext.css"></link></head>');
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
   html.push('<h1>Todas las extensiones por categoría</h1>\n');
   html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/>');
@@ -229,7 +229,7 @@ function generarContenidoPorTitulo(response) {
   var data = response.getDataTable();
   var html = [];
   
-  html.push('<head><link rel="stylesheet" type="text/css" href="http://dl.dropbox.com/u/2765579/style_I7_ext.css"></link></head>');
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
   html.push('<h2>Todas las extensiones por título</h2>');
   html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/>');
@@ -255,7 +255,7 @@ function generarContenidoDeBusqueda(response)
   var data = response.getDataTable();
   var html = [];
 
-  html.push('<head><link rel="stylesheet" type="text/css" href="http://dl.dropbox.com/u/2765579/style_I7_ext.css"></link></head>');
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
   html.push('<h2>Resultado de la búsqueda</h2>');
   html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/>');
@@ -310,7 +310,7 @@ function generarContenidoPorAutor(response) {
   var data = response.getDataTable();
   var html = [];
   
-  html.push('<head><link rel="stylesheet" type="text/css" href="http://dl.dropbox.com/u/2765579/style_I7_ext.css"></link></head>');
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
   html.push('<h2>Todas las extensiones por autor</h2>');
   html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/><br/>');
@@ -353,7 +353,7 @@ function generarContenidoPorTraductor(response) {
   var data = response.getDataTable();
   var html = [];
   
-  html.push('<head><link rel="stylesheet" type="text/css" href="http://dl.dropbox.com/u/2765579/style_I7_ext.css"></link></head>');
+  html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
 
   html.push('<h2>Todas las extensiones por traductor</h2>');
   html.push('<a href="javascript:etiqueta_to_go=\' \';sendQueryNavegacion();">(volver a categorías)</a><br/><br/>');
