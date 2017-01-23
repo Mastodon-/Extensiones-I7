@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Module>
 <ModulePrefs title="Extensiones por categoria" 
     title_url="http://groups.google.com/group/Google-Gadgets-API" 
@@ -9,7 +9,7 @@
 
 <Content type="html" preferred_width="800" preferred_heigth="600"><![CDATA[
 
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<!-- <script src="http://www.google.com/jsapi" type="text/javascript"></script> -->
 
 <div id="tablediv" style="overflow: auto;">
 Generando informe...
