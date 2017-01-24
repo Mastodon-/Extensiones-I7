@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Module>
 <ModulePrefs title="Extensiones por categoria" 
     title_url="http://groups.google.com/group/Google-Gadgets-API" 
@@ -12,7 +12,8 @@
 <script src="http://www.google.com/jsapi" type="text/javascript"></script>
 
 <div id="tablediv" style="overflow: auto;">
-Generando informe...
+Generando informe...<br /><br />
+(Si tienes problemas para visualizar el contenido, por favor usa Firefox y desactiva la protección pinchando en el icono del escudo en la barra de url)
 </div>
 
 <script>
@@ -123,14 +124,8 @@ function generarContenidoNavegacion(response) {
 
   var html = [];   // start the HTML output string
   html.push('<head><link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Mastodon-/Extensiones-I7/master/style_I7_ext.css"></link></head>');
-
-  html.push('<h1>Navegación por categorías</h1>\n');
-
-  var categoria_actual = "";
-  
-  html.push('<table width="100%">');
-  
-  html.push('<tr><td width="35%" style="vertical-align: top; font-size: medium;">Búsqueda</td><td style="font-size: small;">');
+  var categoria_actual = ""
+  html.push('<h1>Navegación por categorías</h1><table width="100%"><tr><td width="35%" style="vertical-align: top; font-size: medium;">Búsqueda</td><td style="font-size: small;">');
   html.push('<form name="buscador" action="#" onsubmit="searchIt(); return false" align="right"><input name="name" /><input type="submit" value="Buscar" /></form>');
   html.push('</td></tr><br/>');
   
@@ -147,7 +142,7 @@ function generarContenidoNavegacion(response) {
   	var catg = data.getFormattedValue(row_nav, 0);
   	if (catg != categoria_actual)
   	{
-  		if (row_nav != 0) html.push('<td/><tr/><br/>');
+  		if (row_nav != 0) html.push('</td/></tr>');
   		html.push('<tr>');
   		html.push('<td width="35%" style="vertical-align: top; font-size: medium;">'+catg+'</td>');
   		html.push('<td style="font-size: small;">');
@@ -166,7 +161,6 @@ function generarContenidoNavegacion(response) {
 		html.push('!</i></font>');
 	}
 	html.push('<br/>');
-	
   }
   html.push('<tr/></table>');
   
